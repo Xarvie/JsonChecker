@@ -28,7 +28,7 @@ int CONFIG_USE_COMMENT = 1：
 support ```/*comments*/``` and ```// comments ```
 
 int CONFIG_TAB_IN_STR = 1：
-support ```"tab: key": 12```
+support ```"tab: key": 12``` auto converted to ```"tab:\tkey": 12```
 
 int CONFIG_ZERO_FIRST = 1：
 support ```"key": 012```
