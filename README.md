@@ -8,8 +8,6 @@ Scan 1000 files, about ***100ms***.
  
 > Intel(R) Core(TM) i7-7700k CPU @ 4.20GHz
 
----
-
 ``` jsonc
 /* support comments */
 {
