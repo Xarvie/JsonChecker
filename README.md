@@ -3,8 +3,12 @@ The JSON check tool used in the work.
 Scan 1000 files, about ***100ms***.
 
 > ***Environment***
+ 
 > Linux CentOS 6.9 x86_64
+ 
 > Intel(R) Core(TM) i7-7700k CPU @ 4.20GHz
+
+---
 
 ``` jsonc
 /* support comments */
@@ -31,3 +35,11 @@ support ```"{tab-> }key": 12```
 
 int CONFIG_ZERO_FIRST = 1：
 support ```"key": 012```
+
+---
+
+### Build Step
+```shell
+cd ./build
+cmake ..
+```
