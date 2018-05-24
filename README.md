@@ -14,7 +14,6 @@ Scan 1000 files, about ***100ms***.
     "key": 1, // comments
     "key2": /*comments*/ 12
 }
-
 ```
 
 Supports a variety of configurations, such as: 
