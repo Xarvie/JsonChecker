@@ -1,7 +1,7 @@
-//============================================================================
-// Name		: parser.cpp
+﻿//============================================================================
+// Name		: main.cpp
 // Author	 : Xarvie
-// Version	 :
+// Version	 : 1.3
 // Copyright : Your copyright notice
 // Description : Hello World in C++, Ansi-style
 //============================================================================
@@ -83,11 +83,12 @@ int execParse(const char * fileDir)
 		size_t filesize = 0;
 		read_file(file, &buff, &filesize);
 		fileStr = (char*)buff;
+		unsigned char * fileByte = (unsigned char *)buff;
 		fileBuff = buff;
-		char bomHEX[] = { 0xEF,0xBB,0xBF };
+		unsigned char bomHEX[] = { 0xEF,0xBB,0xBF };
 		size_t i = 0;
 		const size_t bomLen = sizeof(bomHEX) / sizeof(*bomHEX);
-		for (; i<bomLen && fileStr[i] == bomHEX[i]; i++);
+		for (; i<bomLen && fileByte[i] == bomHEX[i]; i++);
 		if (i == bomLen)
 			fileStr += bomLen;
 		fileStrLen = strlen(fileStr);
@@ -96,13 +97,13 @@ int execParse(const char * fileDir)
 	int ret;
 	char wch = Scanner::whatCh();
 	if (wch != '[' && wch != '{')
-		ERROR("只能是数组和对象");
+		ERRORSTR("只能是数组和对象");
 	if ((ret = Parser::parse_value()) == PASSED)
 	{
 
 		if (Scanner::getCh() != 0)
 		{
-			ERROR("解析完root还有其他奇怪的东西");
+			ERRORSTR("解析完root还有其他奇怪的东西");
 		}
 		//cout << "ok" << fileDir<< endl;
 	}
@@ -130,7 +131,7 @@ void fileExecParse(string fileName)
 		if (fileName[len - i - 1] != jstr[i])
 			return;
 	}
-	std::cout << (fileName.c_str()) << "\n\n" << endl;
+
 	if (execParse(fileName.c_str()) != PASSED)
 	{
 		std::cout << (fileName.c_str()) << "\n\n" << endl;
@@ -152,10 +153,10 @@ void pushFiles(string fileName, void *param)
 void formatDir(int ac, char*arg[], std::set<string>& pathSet)
 {
 #ifdef _WIN32
-	char * tmpPwd = getcwd(NULL, 100);
+	char * tmpPwd = getcwd(NULL, 256);
 	string pwd(tmpPwd);
 	::free(tmpPwd);
-	struct stat st;
+
 	for (int i = 0; i<ac; i++)
 	{
 		DWORD dwAttr = GetFileAttributes(arg[i]);
@@ -167,16 +168,13 @@ void formatDir(int ac, char*arg[], std::set<string>& pathSet)
 			size_t len = strlen(arg[i]);
 			if (len>1 && arg[i][len - 1] == SPLC)
 				arg[i][len - 1] = 0;
-			cout << arg[i] << "  " << len << endl;
 			ergodicFolder(arg[i], NULL, NULL, pushFiles, &pathSet);
 		}
 		else
 		{
 			pathSet.insert(arg[i]);
 		}
-
 	}
-
 	if (ac < 2)
 	{
 		ergodicFolder(pwd, NULL, NULL, pushFiles, &pathSet);
@@ -214,21 +212,6 @@ void formatDir(int ac, char*arg[], std::set<string>& pathSet)
 		ergodicFolder(pwd, NULL, NULL, pushFiles, &pathSet);
 	}
 #endif
-}
-
-int main(int ac, char*arg[])
-{
-	std::set<string>filePathSet;
-	formatDir(ac, arg, filePathSet);
-	string fileOrFolderPath;
-	for (std::set<string>::iterator it = filePathSet.begin(); it != filePathSet.end(); it++)
-	{
-		fileExecParse(*it);
-	}
-	cout << "eNum:" << Parser::errorNum << endl;
-	if (Parser::errorNum)
-		cout << "Error! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\n" << endl;
-	return 0;
 }
 
 void ergodicFolder(string folderPath, void(*dirFunc)(string dir, void *param), void *folderParam, void(*fileFunc)(string file, void *param), void *fileParam)
@@ -300,4 +283,20 @@ void ergodicFolder(string folderPath, void(*dirFunc)(string dir, void *param), v
 
 	closedir(dp);
 #endif
+}
+
+int main(int ac, char*av[])
+{
+	std::set<string>filePathSet;
+	formatDir(ac, av, filePathSet);
+	string fileOrFolderPath;
+	for (std::set<string>::iterator it = filePathSet.begin(); it != filePathSet.end(); it++)
+	{
+		fileExecParse(*it);
+	}
+	cout << "eNum:" << Parser::errorNum << endl;
+	system("pause");
+	if (Parser::errorNum)
+		cout << "Error! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\n" << endl;
+	return 0;
 }

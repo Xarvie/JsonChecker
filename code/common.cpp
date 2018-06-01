@@ -1,4 +1,4 @@
-/*
+﻿/*
  * common.cpp
  *
  * Created on: May 12, 2018

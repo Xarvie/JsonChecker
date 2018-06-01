@@ -1,20 +1,20 @@
-/*
- * parser.cpp
- *
- * Created on: May 12, 2018
- *	 Author: Xarvie
- */
+﻿/*
+* parser.cpp
+*
+* Created on: May 12, 2018
+*	 Author: Xarvie
+*/
 
 #include "parser.h"
 #include "common.h"
 
 // TODO Scanner
-size_t	Scanner::pos=0;
-char	Scanner::oldCh=' ';
-int		Scanner::lineNumber=0;
-int		Scanner::linePos=0;
-int		Scanner::oldLinePos=0;
-int		Scanner::goBack=0;
+size_t	Scanner::pos = 0;
+char	Scanner::oldCh = ' ';
+int		Scanner::lineNumber = 0;
+int		Scanner::linePos = 0;
+int		Scanner::oldLinePos = 0;
+int		Scanner::goBack = 0;
 state	Scanner::sState = NORMAL;
 
 
@@ -40,15 +40,15 @@ char Scanner::getCurCh()
 
 char Scanner::get()
 {
-	if(pos==fileStrLen)
+	if (pos == fileStrLen)
 		return 0;
 	char ch = fileStr[pos];
-	if(pos>0)
+	if (pos>0)
 		Scanner::oldCh = fileStr[pos - 1];
-	if(Scanner::oldCh=='\n')
+	if (Scanner::oldCh == '\n')
 	{
 		Scanner::lineNumber++;
-		Scanner::linePos=0;
+		Scanner::linePos = 0;
 	}
 	Scanner::pos++;
 
@@ -59,16 +59,15 @@ char Scanner::get()
 char Scanner::getCh()
 {
 	char ch;
-	do{
+	do {
 		ch = Scanner::get();
-	}
-	while(ch==' ' || ch=='\n'|| ch == '\r' || ch=='\t');
+	} while (ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t');
 	return ch;
 }
 
 char Scanner::what()
 {
-	if(pos==fileStrLen)
+	if (pos == fileStrLen)
 		return 0;
 	size_t tmpPos = pos;
 	char ch = fileStr[tmpPos++];
@@ -80,15 +79,15 @@ char Scanner::whatCh()
 {
 	char ch = 0;
 	size_t pos = Scanner::pos;
-	if(pos >= fileStrLen)
+	if (pos >= fileStrLen)
 		return 0;
 	do
 	{
-		if(pos >= fileStrLen)
+		if (pos >= fileStrLen)
 			return 0;
 		ch = fileStr[pos++];
 		ch = skipCommentByWhat(ch, pos);
-	}while(ch==' ' || ch=='\r'|| ch == '\n' || ch=='\t');
+	} while (ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t');
 	return ch;
 }
 
@@ -120,16 +119,16 @@ int Scanner::getStr(std::string& str, size_t& len)
 			case 'u':
 				break;
 			default:
-				ERROR("\\后面只能是\"\\/bfnrtu");
+				ERRORSTR("后面只能是\" \\ b f n r t u");
 			}
 		}
-		else if(ch == '\r' || ch == '\n')
+		else if (ch == '\r' || ch == '\n')
 		{
-			ERROR("没有右引号");
+			ERRORSTR("没有右引号");
 		}
 		else if (((unsigned char)ch < ' ' && !(CONFIG_TAB_IN_STR && ch == '\t')))
 		{
-			ERROR("字符串中有非法字符");
+			ERRORSTR("字符串中有非法字符");
 		}
 	}
 	Scanner::sState = NORMAL;
@@ -208,7 +207,7 @@ int Parser::parse_literal(const char* literal)
 	{
 		ch = Scanner::get();
 		if (ch != literal[i + 1])
-			ERROR("关键字错误");
+			ERRORSTR("关键字错误");
 	}
 	return PASSED;
 }
@@ -217,41 +216,41 @@ int Parser::parse_number()
 {
 	char beginch = Scanner::getCurCh();
 	char ch = beginch;
-	if(beginch == '-')
+	if (beginch == '-')
 		ch = Scanner::get();
 
-	if('0'==ch && !CONFIG_ZERO_FIRST){}
-	else if(IS0T9(ch))
+	if ('0' == ch && !CONFIG_ZERO_FIRST) {}
+	else if (IS0T9(ch))
 	{
-		for(char wch = Scanner::what();IS0T9(wch);wch = Scanner::what())
+		for (char wch = Scanner::what(); IS0T9(wch); wch = Scanner::what())
 			ch = Scanner::get();
 	}
 	else
 	{
-		if(beginch == '-')
-			ERROR("负数号后面必须是数字");
-		ERROR("奇怪的符号");
+		if (beginch == '-')
+			ERRORSTR("负数号后面必须是数字");
+		ERRORSTR("奇怪的符号");
 	}
 
 	char wch = Scanner::what();
-	if(wch == '.')
+	if (wch == '.')
 	{
 		ch = Scanner::get();
 		ch = Scanner::get();
-		if(!IS0T9(ch))
-			ERROR("小数点后不是数字");
-		for(wch = Scanner::what();IS0T9(wch);wch = Scanner::what())
+		if (!IS0T9(ch))
+			ERRORSTR("小数点后不是数字");
+		for (wch = Scanner::what(); IS0T9(wch); wch = Scanner::what())
 			ch = Scanner::get();
 	}
-	if(wch == 'e' || wch == 'E')
+	if (wch == 'e' || wch == 'E')
 	{
 		ch = Scanner::get();
 		ch = Scanner::get();
-		if(ch == '+' || ch == '-')
+		if (ch == '+' || ch == '-')
 			ch = Scanner::get();
-		if(!IS0T9(ch))
-			ERROR("科学记数E后不是数字加号减号");
-		for(char wch = Scanner::what();IS0T9(wch);wch = Scanner::what())
+		if (!IS0T9(ch))
+			ERRORSTR("科学记数E后不是数字加号减号");
+		for (char wch = Scanner::what(); IS0T9(wch); wch = Scanner::what())
 			ch = Scanner::get();
 	}
 	return PASSED;
@@ -269,27 +268,27 @@ int Parser::parse_string()
 int Parser::parse_array()
 {
 	char ch = Scanner::whatCh();
-	if(ch == ']')
+	if (ch == ']')
 	{
 		Scanner::getCh();
 		return PASSED;
 	}
 
-	for(;;)
+	for (;;)
 	{
 		if (parse_value() != PASSED)
 			return -1;
 		ch = Scanner::getCh();
-		if(ch == ',')
+		if (ch == ',')
 		{
 		}
-		else if(ch == ']')
+		else if (ch == ']')
 		{
-			 return PASSED;
+			return PASSED;
 		}
 		else
 		{
-			ERROR("缺少]右中括号 | 有奇怪的字符挡在]右中括号前面");
+			ERRORSTR("缺少]右中括号 | 有奇怪的字符挡在]右中括号前面");
 		}
 	}
 	return PASSED;
@@ -306,20 +305,20 @@ int Parser::parse_object()
 		return PASSED;
 	}
 	char ch = Scanner::getCh();
-	for(;;)
+	for (;;)
 	{
 		std::string str;
 		size_t len = 0;
-		if(ch != '"')
+		if (ch != '"')
 		{
-			if(ch == '}')
-				ERROR("末尾多了逗号");
+			if (ch == '}')
+				ERRORSTR("末尾多了逗号");
 			else
-				ERROR("key丢失");
+				ERRORSTR("key丢失");
 		}
 		Scanner::getStr(str, len);
-		if((ch = Scanner::getCh()) != ':')
-			ERROR("key后面丢失冒号");
+		if ((ch = Scanner::getCh()) != ':')
+			ERRORSTR("key后面丢失冒号");
 
 		if (parse_value() != PASSED)
 			return -1;
@@ -334,7 +333,7 @@ int Parser::parse_object()
 			return PASSED;
 		}
 		else {
-			ERROR("object没逗号或者右花括号");
+			ERRORSTR("object没逗号或者右花括号");
 			break;
 		}
 	}
@@ -344,16 +343,16 @@ int Parser::parse_object()
 int Parser::parse_value()
 {
 	char ch = Scanner::getCh();
-	switch(ch)
+	switch (ch)
 	{
-		case 't': return parse_literal( "true");
-		case 'f': return parse_literal("false");
-		case 'n': return parse_literal("null");
-		case '"': return parse_string();
-		case '[': return parse_array();
-		case '{': return parse_object();
-		case '\0': return -1;
-		default: return parse_number();
+	case 't': return parse_literal("true");
+	case 'f': return parse_literal("false");
+	case 'n': return parse_literal("null");
+	case '"': return parse_string();
+	case '[': return parse_array();
+	case '{': return parse_object();
+	case '\0': return -1;
+	default: return parse_number();
 	}
 	return 0;
 }
@@ -364,36 +363,36 @@ int Parser::error(const char * str)
 	size_t elineNum = Scanner::lineNumber;
 	//size_t elinePos = Scanner::linePos;
 	{
-		Scanner::pos=0;
-		Scanner::oldCh=' ';
-		Scanner::lineNumber=0;
+		Scanner::pos = 0;
+		Scanner::oldCh = ' ';
+		Scanner::lineNumber = 0;
 
-		Scanner::linePos=0;
-		Scanner::oldLinePos=0;
-		Scanner::goBack=0;
+		Scanner::linePos = 0;
+		Scanner::oldLinePos = 0;
+		Scanner::goBack = 0;
 	}
-	if(CONFIG_PRINT_ERROR)
+	if (CONFIG_PRINT_ERROR)
 	{
 		std::cout << "1:";
-		for(size_t i = 0; i < epos; i++)
+		for (size_t i = 0; i < epos; i++)
 		{
-			if(Scanner::pos==fileStrLen)
+			if (Scanner::pos == fileStrLen)
 				return 0;
 			char ch = fileStr[Scanner::pos];
-			if(Scanner::pos>0)
+			if (Scanner::pos>0)
 				Scanner::oldCh = fileStr[Scanner::pos - 1];
-			if(Scanner::oldCh=='\n')
+			if (Scanner::oldCh == '\n')
 			{
 				Scanner::lineNumber++;
-				Scanner::linePos=0;
-				std::cout << Scanner::lineNumber+1 << ":" ;
+				Scanner::linePos = 0;
+				std::cout << Scanner::lineNumber + 1 << ":";
 			}
 			Scanner::pos++;
 			std::cout << ch;
 		}
 	}
-	std::cout << "\n\n错误: 第"<< elineNum + 2 <<"行上方" <<","<< str << std::endl;
-	for(size_t i = 0; i < Scanner::pos; i++)
+	std::cout << "\n\n错误: 第" << elineNum + 2 << "行上方" << "," << str << std::endl;
+	for (size_t i = 0; i < Scanner::pos; i++)
 		Scanner::get();
 
 	return -1;
