@@ -21,13 +21,7 @@ PickSourceFiles(
 MakeFilter(
     ${CMAKE_CURRENT_SOURCE_DIR}/code)
         
-if(WIN32 AND NOT MINGW)
-
-    ADD_EXECUTABLE(main
-        ${CODEFILES})
-
-
-    target_include_directories(main
-        PUBLIC ${INCLUDEDIRS})
-        
-endif()
+ADD_EXECUTABLE(main
+    ${CODEFILES})
+target_include_directories(main
+    PUBLIC ${INCLUDEDIRS})
