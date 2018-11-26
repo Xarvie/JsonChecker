@@ -1,6 +1,6 @@
 # JsonChecker
-The JSON check tool used in the work.
-Scan 1000 files, about ***100ms***.
+JSON check tool.
+1 thread 1000 files 100ms.
 
 > ***Environment***
  
@@ -35,8 +35,12 @@ support ```"key": 012```
 
 ---
 
-### Build Step
+### Build Step (Windows && Linux && OSX)
 ```shell
+mkdir ./build
 cd ./build
-cmake ..
+cmake ..   ##if need X86_64 ver: cmake .. -A x64
+cmake --build . --config Release
+./Release/main
+
 ```
