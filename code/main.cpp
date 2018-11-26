@@ -1,7 +1,7 @@
 ﻿//============================================================================
 // Name		: main.cpp
 // Author	 : Xarvie
-// Version	 : 1.3
+// Version	 : 1.2
 // Copyright : Your copyright notice
 // Description : Hello World in C++, Ansi-style
 //============================================================================
@@ -196,7 +196,7 @@ void formatDir(int ac, char*arg[], std::set<string>& pathSet)
 				if (len>1 && arg[i][len - 1] == SPLC)
 					arg[i][len - 1] = 0;
 				cout << arg[i] << "  " << len << endl;
-				//chdir(arg[i]);
+
 				ergodicFolder(arg[i], NULL, NULL, pushFiles, &pathSet);
 
 			}
@@ -295,8 +295,12 @@ int main(int ac, char*av[])
 		fileExecParse(*it);
 	}
 	cout << "eNum:" << Parser::errorNum << endl;
+	#ifdef _WIN32
 	system("pause");
+	#else
 	if (Parser::errorNum)
 		cout << "Error! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\nError! Error! Error! Error! Error! Error! Error!\n" << endl;
+	#endif
+	
 	return 0;
 }

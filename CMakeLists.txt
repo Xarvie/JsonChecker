@@ -3,9 +3,15 @@ cmake_minimum_required (VERSION 3.2)
 list(APPEND CMAKE_MODULE_PATH
   "${CMAKE_SOURCE_DIR}/cmake/macros")
 include(AutoCollect)
-set(CMAKE_CL_64 1)
+include(StaticMFC)
+
 # cd build
 # cmake .. -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND"
+
+set(USE_STATIC_MFC 1)
+list(APPEND CODEFILES ${CMAKE_CURRENT_SOURCE_DIR}/logo.rc)
+
+
 PickIncludeDirectories(
     ${CMAKE_CURRENT_SOURCE_DIR}/code
     INCLUDEDIRS
@@ -21,7 +27,7 @@ PickSourceFiles(
 MakeFilter(
     ${CMAKE_CURRENT_SOURCE_DIR}/code)
         
-ADD_EXECUTABLE(main
+ADD_EXECUTABLE(main 
     ${CODEFILES})
 target_include_directories(main
     PUBLIC ${INCLUDEDIRS})

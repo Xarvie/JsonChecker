@@ -153,14 +153,17 @@ int Scanner::getStr(std::string& str, size_t& len)
 {													\
 if(Scanner::sState == STR)							\
 	return ch;										\
+int i = 0;											\
 while(CONFIG_USE_COMMENT && ch == '/'){				\
+	i++;											\
 	char ch2 = fileStr[pos];						\
 	if(ch2 == 0) return 0;							\
 	if(ch2 == '/')									\
 		while((ch2=fileStr[pos])){					\
 			NEXT;									\
 			if((ch2 == '\r' || ch2 =='\n'))			\
-				break;}								\
+				break;								\
+		}											\
 	else if(ch2 == '*'){							\
 		NEXT;										\
 		for(;;){									\
@@ -170,7 +173,12 @@ while(CONFIG_USE_COMMENT && ch == '/'){				\
 				if(ch == '/'){						\
 					NEXT;							\
 					break;							\
-}}}}}}while(0)
+	}}}}											\
+	else if(i == 1) {								\
+		break; 										\
+	}												\
+}													\
+}while(0)
 
 char Scanner::skipComment(char ch)
 {
