@@ -1,6 +1,6 @@
 # JsonChecker
-The JSON check tool used in the work.
-Scan 1000 files, about ***100ms***.
+JSON check tool.
+1 thread, 1000 files 100ms.
 
 > ***Environment***
  
@@ -25,18 +25,21 @@ int CONFIG_ZERO_FIRST = 1;
 int CONFIG_DEEP_LIMIT = 1;
 ```
 int CONFIG_USE_COMMENT = 1：
-support ```/*comments*/``` and ```// comments ```
+e.g ```/*comments*/``` and ```// comments ```
 
 int CONFIG_TAB_IN_STR = 1：
-support ```"tab: key": 12``` auto converted to ```"tab:\tkey": 12```
+e.g ```"tab: key": 12``` auto converted to ```"tab:\tkey": 12```
 
 int CONFIG_ZERO_FIRST = 1：
-support ```"key": 012```
+e.g ```"key": 012```
 
----
 
-### Build Step
+### Build Step (Windows && Linux && OSX)
 ```shell
+mkdir ./build
 cd ./build
-cmake ..
+cmake ..   ##if need X86_64 ver: cmake .. -A x64
+cmake --build . --config Release
+./Release/main
+
 ```
