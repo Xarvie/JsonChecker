@@ -16,6 +16,8 @@ JSON check tool.
 }
 ```
 
+UTF-8 With Bom support.    
+
 Supports a variety of configurations, such as: 
 ``` cpp
 /* code/parser.cpp */
